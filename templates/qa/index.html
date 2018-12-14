@@ -1,0 +1,45 @@
+{% extends 'qa/base.html' %}
+
+{% block title %}
+    {{ block.super }} new Questions - Page {{ questions.number }}{{ page }}
+{% endblock title %}
+
+{% block content %}
+    {{ block.super }}
+    {# Questions #}
+    {% if questions %}
+        <div class="questions">
+            {% for question in questions %}
+                <div class="question">
+                    <h3>Question: {{ question.title }}</h3>
+                    <h5>Rating: {{ question.rating }}. Added by {{ question.author.username }}
+                        on {{ question.added_at }}</h5>
+                    <p>{{ question.text }}</p>
+
+                    {# backreference for ForeignKey #}
+                    {% with answers=question.answer_set_count %}
+                        <p>Answer: <a href="/question/{{ question.id }}/">{{ answers }}</a></p>
+                    {% endwith %}
+                </div>
+                <hr/>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Have no questions!</p>
+    {% endif %}
+    {# /Questions #}
+
+    {# Paginator #}
+    <div class="pagination">
+    <span class="step-links">
+        {% if questions.has_previous %}
+            <a href="?page={{ questions.previous_page_number }}&limit={{ limit }}"/>
+        {% endif %}
+        <span class="current">Page {{ questions.number }} of {{ questions.paginator.num_pages }}</span>
+        {% if questions.has_next %}
+            <a href="?page={{ question.next_page_number }}&limit={{ limit }}"/>
+        {% endif %}
+    </span>
+    </div>
+    {# /Paginator #}
+{% endblock content %}
